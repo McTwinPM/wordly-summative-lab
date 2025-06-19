@@ -28,7 +28,7 @@ async function fetchDictionaryData(word) {
             throw new Error('word not found');
         }
         const data = await response.json();
-        fetchDictionaryData(word);
+        displayDefinition(data);
         return data;
     } catch (error) {
         console.error('Error fetching dictionary data:', error);
@@ -44,24 +44,23 @@ function displayDefinition(data) {
         return;
     }
     definitionDisplay.innerHTML = `
-        <h2>${data.word}</h2>
-        <p>Phonetic: ${data.phonetic}</p>
+        <h2>${data[0].word}</h2>
+        <p>Phonetic: ${data[0].phonetic}</p>
         <p>Definition: ${data[0].meanings.map(meaning => meaning.definitions[0].definition).join(", ")}</p>
     `;
 }
 
-document.addEventListener("submit", function (event) {
+document.getElementById('word-submit').addEventListener("click", function (event) {
     event.preventDefault();
-    if (event.target.id === 'word-submit') {
-        const wordInput = document.getElementById('word-submit');
+        const wordInput = document.getElementById('word-box');
         const word = wordInput.value.trim();
         if (!word) {
             displayError('Please enter a word');
             return;
         }
-        displayError(''); // Clear any previous error message
+        displayError(''); // Clear previous error message
+        wordInput.value = ''; // Clear the input field
         fetchDictionaryData(word)
-    }
 })
 
 function displayError(message){
