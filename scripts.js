@@ -39,15 +39,28 @@ async function fetchDictionaryData(word) {
 
 function displayDefinition(data) {
     const definitionDisplay = document.getElementById('definition-display');
+    const audiolink = data[0].phonetics.find(p => p.audio)?.audio
     if (!definitionDisplay) {
         console.error('Definition display element not found');
         return;
     }
     definitionDisplay.innerHTML = `
         <h2>${data[0].word}</h2>
-        <p>Phonetic: ${data[0].phonetic}</p>
-        <p>Definition: ${data[0].meanings.map(meaning => meaning.definitions[0].definition).join(", ")}</p>
+        <p>${data[0].phonetic} ${audiolink ? `<button id="play-audio">🔊 Play Pronunciation</button>` : ''}</p>
+        
+        
+        <p>Definitions: 
+        <ul>${data[0].meanings.map(meaning => meaning.definitions[0].definition).join("</ul><ul> ")}
+        </ul></p>
+        <p> synonyms:
+        <ul>${data[0].meanings.map(meaning => meaning.definitions[0].synonyms.join(", ")).join("</ul><ul> ")}
+        </p>
     `;
+    if (audiolink) {
+        document.getElementById('play-audio').onclick = () => {
+            new Audio(audiolink).play();
+        };
+    }
 }
 
 document.getElementById('word-submit').addEventListener("click", function (event) {
