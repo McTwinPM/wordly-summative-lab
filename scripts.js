@@ -23,6 +23,16 @@ function displayDefinition(data) {
         .flatMap(meaning => meaning.definitions)
         .flatMap(definition => definition.synonyms)
         .filter(synonym => synonym !== "");
+    const errorMessage = document.getElementById('error-message');
+    if (errorMessage) {
+        errorMessage.classList.add('hidden');
+    }
+    if (!data || !data.length) {
+        console.error('No data found for the word');
+        displayError('No data found for the word');
+        return;
+    }
+        
     if (!definitionDisplay) {
         console.error('Definition display element not found');
         return;
@@ -67,3 +77,8 @@ function displayError(message){
     errorMessage.classList.remove('hidden');
     errorMessage.textContent = `${message}`;
 }
+module.exports = {
+    fetchDictionaryData,
+    displayDefinition,
+    displayError
+};
