@@ -1,20 +1,22 @@
-const { before, beforeEach, it, describe } = require("node:test");
+/**
+ * @jest-environment jsdom
+ */
+// const { before, beforeEach, it, describe }
 const { fetchDictionaryData } = require("./scripts");
-const { displayDefinition } = require("./scripts");
-const { displayError } = require("./scripts");
-const { JSDOM } = require("jsdom");
+// const { displayDefinition } = require("./scripts");
+// const { displayError } = require("./scripts");
+//  const { JSDOM } = require("jsdom");
+
 
 describe('fetchDictionaryData', () => {
     beforeEach(() => {
         global.fetch = jest.fn();
-        global.document = new JSDOM(`<!DOCTYPE html>
-            <html>
-                <body>
-                    <div id="definition-display"></div>
-                    <div id="error-message"></div>
-                </body>
-            </html>`).window.document;
-    });
+        document.body.innerHTML = `
+            <div id="definition-display"></div>
+            <div id="error-message"></div>
+        `;
+    }
+    );
     it('should fetch dictionary data for a valid word', async () => {
         const mockData = [{
             word: "test",
@@ -50,8 +52,9 @@ describe('fetchDictionaryData', () => {
             phonetic: "/tɛst/",
             phonetics: [{ audio: "https://example.com/audio/test.mp3" }],
             meanings: [{
-                definitions: [{ definition: "A procedure intended to establish the quality, performance, or reliability of something." }],
+                definitions: [{ definition: "A procedure intended to establish the quality, performance, or reliability of something." ,
                 synonyms: []
+                }]
             }]
         }];
 
@@ -62,5 +65,6 @@ describe('fetchDictionaryData', () => {
 
         await fetchDictionaryData("test");
         expect(document.getElementById('definition-display').innerHTML).toContain("Synonyms: None");
+    }
+    );          
 });
-})

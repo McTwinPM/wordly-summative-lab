@@ -10,7 +10,6 @@ async function fetchDictionaryData(word) {
         displayDefinition(data);
         return data;
     } catch (error) {
-        console.error('Error fetching dictionary data:', error);
         displayError(error.message);
         throw error;
     }
@@ -54,19 +53,24 @@ function displayDefinition(data) {
         };
     }
 }
-
-document.getElementById('word-submit').addEventListener("click", function (event) {
-    event.preventDefault();
-        const wordInput = document.getElementById('word-box');
-        const word = wordInput.value.trim();
-        if (!word) {
-            displayError('Please enter a word');
-            return;
-        }
-        displayError(''); // Clear previous error message
-        wordInput.value = ''; // Clear the input field
-        fetchDictionaryData(word)
-})
+function setupEventListeners() {
+    const wordSubmit = document.getElementById('word-submit');
+    if (wordSubmit) {
+        wordSubmit.addEventListener("click", function (event) {
+            event.preventDefault();
+            const wordInput = document.getElementById('word-box');
+            const word = wordInput.value.trim();
+            if (!word) {
+                displayError('Please enter a word');
+                return;
+            }
+            displayError(''); // Clear previous error message
+            wordInput.value = ''; // Clear the input field
+            fetchDictionaryData(word)
+        });
+    }
+}
+setupEventListeners();
 
 function displayError(message){
     const errorMessage = document.getElementById('error-message');
@@ -80,5 +84,6 @@ function displayError(message){
 module.exports = {
     fetchDictionaryData,
     displayDefinition,
-    displayError
+    displayError,
+    setupEventListeners
 };
