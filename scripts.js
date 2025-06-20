@@ -1,25 +1,4 @@
-// fetch("https://api.dictionaryapi.dev/api/v2/entries/en/<word>")
-// .then(response => {
-//     if (!response.ok) {
-//         throw new Error("Network response was not ok");
-//     }
-//     return response.json();
-// })
-// .then(data => {
-//     const word = data[0].word;
-//     const phonetic = data[0].phonetic || "No phonetic available";
-//     const definitions = data[0].meanings.map(meaning => meaning.definitions[0].definition).join(", ");
-    
-//     document.getElementById("word").textContent = word;
-//     document.getElementById("phonetic").textContent = phonetic;
-//     document.getElementById("definitions").textContent = definitions;
-// })
-// .catch(error => {
-//     console.error("There was a problem with the fetch operation:", error);
-//     document.getElementById("word").textContent = "Error fetching word";
-//     document.getElementById("phonetic").textContent = "";
-//     document.getElementById("definitions").textContent = "";
-// });
+
 async function fetchDictionaryData(word) {
     const api = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
     try {
@@ -40,20 +19,23 @@ async function fetchDictionaryData(word) {
 function displayDefinition(data) {
     const definitionDisplay = document.getElementById('definition-display');
     const audiolink = data[0].phonetics.find(p => p.audio)?.audio
+    const allSynonyms = data[0].meanings
+        .flatMap(meaning => meaning.definitions)
+        .flatMap(definition => definition.synonyms)
+        .filter(synonym => synonym !== "");
     if (!definitionDisplay) {
         console.error('Definition display element not found');
         return;
     }
     definitionDisplay.innerHTML = `
         <h2>${data[0].word}</h2>
-        <p>${data[0].phonetic} ${audiolink ? `<button id="play-audio">🔊 Play Pronunciation</button>` : ''}</p>
-        
-        
+        <p>${data[0].phonetic} ${audiolink ? `<button id="play-audio">🔊 Play Pronunciation</button>` : ''}</p> 
         <p>Definitions: 
-        <ul>${data[0].meanings.map(meaning => meaning.definitions[0].definition).join("</ul><ul> ")}
-        </ul></p>
-        <p> synonyms:
-        <ul>${data[0].meanings.map(meaning => meaning.definitions[0].synonyms.join(", ")).join("</ul><ul> ")}
+        <ol>${data[0].meanings
+            .map(meaning =>`<li>${meaning.definitions[0].definition}</li>`)
+                .join("")}
+        </ol></p>
+        <p>Synonyms: ${allSynonyms.length ? allSynonyms.join(", ") : "None"}</p>
         </p>
     `;
     if (audiolink) {
