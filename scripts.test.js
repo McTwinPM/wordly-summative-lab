@@ -1,11 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-// const { before, beforeEach, it, describe }
+
 const { fetchDictionaryData } = require("./scripts");
-// const { displayDefinition } = require("./scripts");
-// const { displayError } = require("./scripts");
-//  const { JSDOM } = require("jsdom");
+
 
 
 describe('fetchDictionaryData', () => {
