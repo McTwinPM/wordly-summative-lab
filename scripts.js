@@ -1,4 +1,4 @@
-
+//Fetching from Dictionary API
 async function fetchDictionaryData(word) {
     const api = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
     try {
@@ -14,7 +14,27 @@ async function fetchDictionaryData(word) {
         throw error;
     }
 }
+//Set up event listeners
+function setupEventListeners() {
+    const wordSubmit = document.getElementById('word-submit');
+    if (wordSubmit) {
+        wordSubmit.addEventListener("click", function (event) {
+            event.preventDefault();
+            const wordInput = document.getElementById('word-box');
+            const word = wordInput.value.trim();
+            if (!word) {
+                displayError('Please enter a word');// Error message for no input
+                return;
+            }
+            displayError(''); // Clear previous error message
+            wordInput.value = ''; // Clear the input field
+            fetchDictionaryData(word)
+        });
+    }
+}
+setupEventListeners();
 
+// function to display the definition of the word
 function displayDefinition(data) {
     const definitionDisplay = document.getElementById('definition-display');
     const audiolink = data[0].phonetics.find(p => p.audio)?.audio
@@ -53,25 +73,8 @@ function displayDefinition(data) {
         };
     }
 }
-function setupEventListeners() {
-    const wordSubmit = document.getElementById('word-submit');
-    if (wordSubmit) {
-        wordSubmit.addEventListener("click", function (event) {
-            event.preventDefault();
-            const wordInput = document.getElementById('word-box');
-            const word = wordInput.value.trim();
-            if (!word) {
-                displayError('Please enter a word');
-                return;
-            }
-            displayError(''); // Clear previous error message
-            wordInput.value = ''; // Clear the input field
-            fetchDictionaryData(word)
-        });
-    }
-}
-setupEventListeners();
 
+// Display error message
 function displayError(message){
     const errorMessage = document.getElementById('error-message');
     if (!errorMessage) {
